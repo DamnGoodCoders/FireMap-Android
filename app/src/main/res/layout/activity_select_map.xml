@@ -8,6 +8,8 @@
         tools:context=".SelectMap">
 
     <android.support.v7.widget.RecyclerView
-            android:layout_width="395dp"
-            android:layout_height="715dp" tools:layout_editor_absoluteY="8dp" tools:layout_editor_absoluteX="8dp"/>
+            android:id="@+id/map_list_view"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 </android.support.constraint.ConstraintLayout>
