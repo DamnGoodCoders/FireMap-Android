@@ -5,7 +5,8 @@
     <item
             android:id="@+id/action_change_map"
             android:title="@string/action_change_map"
-            app:showAsAction="never"/>
+            app:showAsAction="never"
+            app:actionViewClass="android.widget.Button"/>
     <item
         android:id="@+id/action_settings"
         android:title="@string/menu_action_setting"
