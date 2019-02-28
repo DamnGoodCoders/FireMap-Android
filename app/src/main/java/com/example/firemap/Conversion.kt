@@ -3,15 +3,23 @@ package com.example.firemap
 import android.app.Activity
 import android.os.Bundle
 import android.content.Intent
+import android.net.Uri
+import android.os.Environment
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 
 import kotlinx.android.synthetic.main.activity_conversion.*
+
+import org.gdal.gdal.gdal.Translate
 
 private const val READ_REQUEST_CODE: Int = 42
 
 class Conversion : AppCompatActivity() {
 
-    // TODO add picker to choose output directory
+    private val TAG = "Conversion"  // logging tag
+
+    // TODO add picker button to choose output directory -> save uri
+    // TODO how to choose multiple files?
 
     private val filename: String = "" // TODO make into arraylist of file names
 
@@ -34,8 +42,7 @@ class Conversion : AppCompatActivity() {
             // file (as opposed to a list of contacts or timezones)
             addCategory(Intent.CATEGORY_OPENABLE)
 
-            // Filter to show only images, using the image MIME data type.
-            // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+            // Filter to show only pdfs, using the application/pdf data type.
             // To search for all documents available via installed storage providers,
             // it would be "*/*".
             type = "*/pdf"  // TODO check to ensure it works correctly
@@ -46,7 +53,7 @@ class Conversion : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
 
-        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
+        // The ACTION_GET_CONTENT intent was sent with the request code
         // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
         // response to some other intent, and the code below shouldn't run at all.
 
@@ -56,10 +63,31 @@ class Conversion : AppCompatActivity() {
             // provided to this method as a parameter.
             // Pull that URI using resultData.getData().
             resultData?.data?.also { uri ->
-//                Log.i(TAG, "Uri: $uri")
-//                showImage(uri)
+                if (isExternalStorageWritable()) {
+                    // TODO add pdf translation here
+                    convertMapPDFToTiff(uri)
+                    // TODO ensure that output directory has been specified first
+                    Log.i(TAG, "Uri: $uri")
+                } else {
+                    Log.i(TAG, "External storage not available")
+                }
             }
         }
     }
+
+    fun convertMapPDFToTiff(uri: Uri) {
+//        Translate(dest, uri, opts)
+    }
+
+    fun isExternalStorageWritable(): Boolean {
+        return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+    }
+
+    /* Checks if external storage is available to at least read */
+    fun isExternalStorageReadable(): Boolean {
+        return Environment.getExternalStorageState() in
+                setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
+    }
+
 
 }
