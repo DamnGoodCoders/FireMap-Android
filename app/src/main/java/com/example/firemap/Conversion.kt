@@ -11,6 +11,10 @@ private const val READ_REQUEST_CODE: Int = 42
 
 class Conversion : AppCompatActivity() {
 
+    // TODO add picker to choose output directory
+
+    private val filename: String = "" // TODO make into arraylist of file names
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conversion)
@@ -34,7 +38,7 @@ class Conversion : AppCompatActivity() {
             // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
             // To search for all documents available via installed storage providers,
             // it would be "*/*".
-            type = "*/pdf"
+            type = "*/pdf"  // TODO check to ensure it works correctly
         }
 
         startActivityForResult(intent, READ_REQUEST_CODE)
