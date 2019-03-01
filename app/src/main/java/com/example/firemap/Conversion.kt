@@ -10,17 +10,19 @@ import android.util.Log
 
 import kotlinx.android.synthetic.main.activity_conversion.*
 
-import java.util.ArrayDeque
+import java.util.*
+import java.io.File
 
-import org.gdal.gdal.gdal.Translate
+import org.gdal.gdal.gdal
 
 private const val READ_REQUEST_CODE: Int = 42
+
 
 class Conversion : AppCompatActivity() {
 
     // TODO add TranslateOptions String vector
     // TODO map the functionality to a nicer/more streamlined layout later; get it working first
-
+    private val optionsVector: Vector<String> = Vector()
     private val TAG = "Conversion"  // logging tag
 
     // TODO add button to choose output directory -> save uri/path
@@ -69,9 +71,9 @@ class Conversion : AppCompatActivity() {
             // Instead, a URI to that document will be contained in the return intent
             // provided to this method as a parameter.
             // Pull that URI using resultData.getData()/getClipData().
-            // TODO ensure that output directory has been specified first
+            // TODO ensure that output directory has been specified first - get default location from Brad
             resultData?.clipData?.also { clip ->
-                for (idx in 0..clip.itemCount) {
+                for (idx in 0..(clip.itemCount - 1)) {
                     Log.i(TAG, "Clip URI: ${clip.getItemAt(idx).uri}")
                     fileURIQueue.add(clip.getItemAt(idx).uri)
                 }
@@ -82,28 +84,41 @@ class Conversion : AppCompatActivity() {
             }
 
             if (isExternalStorageWritable()) {
+//                Log.i(TAG, "DownloadDir: ${Environment.DIRECTORY_DOWNLOADS}")
+//                optionsVector.clear()  // TODO move to constructor/setup; create TranslateOptions
+//                optionsVector.add("-of")
+//                optionsVector.add("GTiff")
+
                 for (uri in fileURIQueue) {
                     Log.i(TAG, "Write URI: $uri")
+                    Log.i(TAG, "Write path: ${uri.path}")
                     convertMapPDFToTiff(uri)
                 }
                 fileURIQueue.clear()  // TODO show queue as ListView/RecycleView on screen
             } else {
-                // TODO show on screen - notify
+                // TODO show on screen - notify!!
                 Log.i(TAG, "External storage not available to write; conversion is impossible")
             }
-        } else {
-            Log.i(TAG, "Request failed.")  // TODO show on screen - notify
-        }
+        } // no need for 'else' statement, the call just went to a different 'intent' action
     }
 
     // TODO add pdf translation here
     // TODO Ensure that conversion CANNOT fail silently - dangerous
     fun convertMapPDFToTiff(uri: Uri) {
-//        Translate(dest, uri, opts)
+        // TODO register drivers, create dataset, etc.
+//        gdal.AllRegister()
+//        val ds = gdal.Open(uri.path)
+//        Environment.getExternalStoragePublicDirectory() // gives File
+
+//        gdal.Translate(Environment.DIRECTORY_DOWNLOADS, ds, )
     }
 
     fun isExternalStorageWritable(): Boolean {
         return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+    }
+
+    fun notifyOnFailure() {  // recipe 7.6
+        // TODO
     }
 
 }
