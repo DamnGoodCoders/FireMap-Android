@@ -14,6 +14,12 @@ import java.util.*
 import java.io.File
 
 import org.gdal.gdal.gdal
+import android.content.DialogInterface
+import android.app.Dialog
+import android.support.v7.app.AlertDialog
+
+import com.example.firemap.FailureAlertDialog
+
 
 private const val READ_REQUEST_CODE: Int = 42
 
@@ -83,6 +89,7 @@ class Conversion : AppCompatActivity() {
                 fileURIQueue.add(uri)
             }
 
+            // TODO move the below to a separate button/method
             if (isExternalStorageWritable()) {
 //                Log.i(TAG, "DownloadDir: ${Environment.DIRECTORY_DOWNLOADS}")
 //                optionsVector.clear()  // TODO move to constructor/setup; create TranslateOptions
@@ -96,14 +103,14 @@ class Conversion : AppCompatActivity() {
                 }
                 fileURIQueue.clear()  // TODO show queue as ListView/RecycleView on screen
             } else {
-                // TODO show on screen - notify!!
+                notifyOnFailure()
                 Log.i(TAG, "External storage not available to write; conversion is impossible")
             }
         } // no need for 'else' statement, the call just went to a different 'intent' action
     }
 
     // TODO add pdf translation here
-    // TODO Ensure that conversion CANNOT fail silently - dangerous
+    // TODO Ensure that conversion CANNOT fail silently - dangerous - use notifyOnFailure
     fun convertMapPDFToTiff(uri: Uri) {
         // TODO register drivers, create dataset, etc.
 //        gdal.AllRegister()
@@ -117,8 +124,10 @@ class Conversion : AppCompatActivity() {
         return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
     }
 
-    fun notifyOnFailure() {  // recipe 7.6
-        // TODO
+    fun notifyOnFailure() {
+        val fragmentManager = supportFragmentManager
+        val failureAlert = FailureAlertDialog()
+        failureAlert.show(fragmentManager, "failure_confirmation")
     }
 
 }
