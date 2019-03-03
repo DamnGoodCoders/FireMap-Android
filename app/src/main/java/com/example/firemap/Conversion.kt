@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_conversion.*
 import java.util.*
 
 import org.gdal.gdal.gdal
+import org.gdal.gdal.TranslateOptions
 
 private const val MAP_REQUEST_CODE: Int = 42
 private const val DEST_REQUEST_CODE: Int = 73
@@ -31,8 +32,6 @@ class Conversion : AppCompatActivity() {
     init {
         optionsVector.add("-of")  // output format
         optionsVector.add("GTiff")
-        optionsVector.add("")  // Indexes 3 and 4 are the input and output files, respectively
-        optionsVector.add("")
     }
 
 
@@ -53,7 +52,7 @@ class Conversion : AppCompatActivity() {
     }
 
     private fun getDestinationDir() {
-        // TODO display destination dir in UI somewhere
+        // TODO UI: display destination dir in somewhere
         // ACTION_OPEN_DOCUMENT_TREE requires minSdkVersion 21+
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         startActivityForResult(intent, DEST_REQUEST_CODE)
@@ -104,7 +103,6 @@ class Conversion : AppCompatActivity() {
         // No need for 'else' statement, the call just went to a different 'intent' action
     }
 
-    // TODO add pdf translation here
     // TODO Ensure that conversion CANNOT fail silently - dangerous - use notifyOnFailure
     fun convertMapPDFToTiff() {
         if (isExternalStorageWritable()) {
@@ -112,19 +110,28 @@ class Conversion : AppCompatActivity() {
                 notifyOnFailure(message = "No files to convert; none selected")
                 return
             }
-        // TODO register drivers, create dataset, opts, etc.
-//        gdal.AllRegister()
-//        val ds = gdal.Open(uri.path)
-//        Environment.getExternalStoragePublicDirectory() // gives File
-
-//        gdal.Translate(Environment.DIRECTORY_DOWNLOADS, ds, opts)
             for (uri in fileURIQueue) {
                 Log.i(TAG, "Write URI: $uri")
                 Log.i(TAG, "Write path: ${uri.path}")
+//                translatePDFToTiff(uri)
             }
-            fileURIQueue.clear()  // TODO show queue as ListView/RecycleView on screen; show progress as well
+            fileURIQueue.clear()  // TODO UI: show queue as ListView/RecycleView on screen; show progress as well
         } else {
             notifyOnFailure(message = "External storage not available to write")
+        }
+    }
+
+    fun translatePDFToTiff(uri: Uri) {
+        // TODO register drivers, create dataset, opts, etc.
+        try {
+            gdal.AllRegister()
+            val ds = gdal.Open(uri.path)
+            val filename = uri.lastPathSegment
+//            Environment.getExternalStoragePublicDirectory() // gives File
+            val options = TranslateOptions(optionsVector)
+            gdal.Translate("$destinationDir/$filename", ds, options)
+        } catch (e: Exception) {  // hmmmmm...
+            notifyOnFailure(message = e.message)
         }
     }
 
