@@ -11,9 +11,7 @@ import android.util.Log
 import kotlinx.android.synthetic.main.activity_conversion.*
 
 import java.util.*
-
-import org.gdal.gdal.gdal
-import org.gdal.gdal.TranslateOptions
+import java.io.File
 
 private const val MAP_REQUEST_CODE: Int = 42
 private const val DEST_REQUEST_CODE: Int = 73
@@ -24,15 +22,10 @@ class Conversion : AppCompatActivity() {
     // TODO map this functionality to a nicer/more streamlined layout later; get it working first
 
     private val TAG = "Conversion"  // logging tag
-    private val defaultDir = "Downloads"  // for use if the destination dir is ever null, which should never happen, but hey
+    // for use if the destination dir is ever null, which should never happen, but hey
+    private val defaultDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).absolutePath
     private var destinationDir: String? = defaultDir  // TODO get default location from Brad
     private val fileURIQueue: ArrayDeque<Uri> = ArrayDeque()  // unknown number of elements
-    private val optionsVector: Vector<String> = Vector(4)
-
-    init {
-        optionsVector.add("-of")  // output format
-        optionsVector.add("GTiff")
-    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +45,7 @@ class Conversion : AppCompatActivity() {
     }
 
     private fun getDestinationDir() {
-        // TODO UI: display destination dir in somewhere
+        // TODO UI: display destination dir in UI somewhere
         // ACTION_OPEN_DOCUMENT_TREE requires minSdkVersion 21+
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         startActivityForResult(intent, DEST_REQUEST_CODE)
@@ -113,7 +106,7 @@ class Conversion : AppCompatActivity() {
             for (uri in fileURIQueue) {
                 Log.i(TAG, "Write URI: $uri")
                 Log.i(TAG, "Write path: ${uri.path}")
-//                translatePDFToTiff(uri)
+                translatePDFToTiff(uri)
             }
             fileURIQueue.clear()  // TODO UI: show queue as ListView/RecycleView on screen; show progress as well
         } else {
@@ -122,16 +115,20 @@ class Conversion : AppCompatActivity() {
     }
 
     fun translatePDFToTiff(uri: Uri) {
-        // TODO register drivers, create dataset, opts, etc.
+            val test_dir = filesDir.absolutePath + "/assets/pdfs/"
+            Log.i(TAG, "TESTDIR: $test_dir")
+
+            val filename = File(uri.path).absolutePath
+            Log.i(TAG, "FILENAME: $filename")
+//            val test_filename = test_dir + "test.pdf"
+//            Log.i(TAG, "TEST_FILENAME: $test_filename")
+//            Log.i(TAG, "DEST: $destinationDir")
         try {
-            gdal.AllRegister()
-            val ds = gdal.Open(uri.path)
-            val filename = uri.lastPathSegment
-//            Environment.getExternalStoragePublicDirectory() // gives File
-            val options = TranslateOptions(optionsVector)
-            gdal.Translate("$destinationDir/$filename", ds, options)
+            // TODO add lib
         } catch (e: Exception) {  // hmmmmm...
             notifyOnFailure(message = e.message)
+            Log.i(TAG, e.stackTrace.toString())
+            Log.i(TAG, e.fillInStackTrace().message)
         }
     }
 

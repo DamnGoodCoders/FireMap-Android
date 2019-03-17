@@ -34,7 +34,4 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation 'org.gdal:gdal:2.4.0'
-//    api project(':gdal')
-//    implementation files('/Users/jfmathews/Documents/02_Learning/00_School/01_Spring_19/01_Software_Engineering/01_Testing/GDAL4Android/gdal/libs/gdal.jar')
 }
