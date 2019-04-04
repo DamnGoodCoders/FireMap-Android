@@ -44,7 +44,12 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
-
+        when(item?.itemId) {
+            R.id.action_qr -> {
+                val intent = Intent(this, QR::class.java)
+                startActivity(intent)
+            }
+        }
         return true
     }
 

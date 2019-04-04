@@ -4,4 +4,7 @@
     <string name="action_change_map">Change Map</string>
     <string name="menu_action_setting">Settings</string>
     <string name="title_activity_maps">Map</string>
+    <string name="action_qr">QR Reader</string>
+    <string name="google_maps_key"></string>
+    <string name="button_qr">Process This Image</string>
 </resources>
