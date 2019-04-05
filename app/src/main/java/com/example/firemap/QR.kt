@@ -10,8 +10,14 @@ import android.widget.Toast
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat.YV12
+import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
+import android.support.v4.content.FileProvider
+import android.support.v7.widget.Toolbar
 import android.util.SparseArray
+import android.view.Menu
+import android.view.MenuItem
 import android.view.SurfaceView
 import android.widget.ImageView
 import android.widget.TextView
@@ -21,7 +27,12 @@ import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.MultiDetector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
+import org.w3c.dom.Text
+import java.io.File
+import java.io.IOException
 import java.nio.ByteBuffer
+import java.text.SimpleDateFormat
+import java.util.*
 
 //import com.google.android.gms.vision.CameraSource
 
@@ -32,65 +43,134 @@ class QR : AppCompatActivity() {
         setContentView(R.layout.activity_qr)
         val qrScanBtn = findViewById<Button>(R.id.qrbuttonprocess)
         qrScanBtn.setOnClickListener{
-            Toast.makeText(this@QR, "Processing Image", Toast.LENGTH_SHORT).show()
-            scanQR()
+            try{
+            scanQR()} catch(e : IOException){
+                Toast.makeText(this@QR, "An Error Has Occured In Scanning The Image",Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        val qrCameraButton = findViewById<Button>(R.id.qrbuttoncamera)
+        qrCameraButton.setOnClickListener{
+            takePicture()
+        }
+
+        val mToolbar: Toolbar = findViewById(R.id.toolbar2)
+        setSupportActionBar(mToolbar)
+    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.my_menu, menu)
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        var selectedOption = ""
+        when(item?.itemId) {
+            R.id.action_change_map -> {
+                val intent = Intent(this, SelectMap::class.java)
+                startActivity(intent)
+            }
+        }
+        when(item?.itemId) {
+            R.id.action_qr -> {
+            }
+        }
+        return true
+    }
+
+    fun getPublicStorageDir(albumName: String): File {
+        val file = File(Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_PICTURES), albumName)
+        return file
+    }
+
+    @Throws(IOException::class)
+    fun createImageF(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        //val storageDir: File = getPublicStorageDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_",
+            ".jpg",
+            storageDir
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            val currentPhotoPath = absolutePath
         }
     }
 
+    fun addpic() {
+        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+            val f = getPublicStorageDir("Photos")
+            mediaScanIntent.data = Uri.fromFile(f)
+            sendBroadcast(mediaScanIntent)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == 1 && resultCode == RESULT_OK){
+            val qrImgView = findViewById<ImageView>(R.id.qrImageView)
+           // val tempbitmap = openFileInput("JPEG_20190405_044854_2337363280288716020.jpg") as Bitmap
+           // qrImgView.setImageBitmap(tempbitmap)
+            addpic()
+        }
+    }
+
+    fun takePicture(){
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            .also {takePictureIntent -> takePictureIntent
+                .resolveActivity(packageManager)
+                ?.also{
+                    val photof: File? = try {
+                        createImageF()
+                    } catch (ex: IOException) {
+                        null
+                    }
+                    photof?.also {
+                        val photoURI: Uri = FileProvider.getUriForFile(
+                            this,
+                            "com.example.firemap.fileprovider",
+                            it
+                        )
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,photoURI)
+                        startActivityForResult(takePictureIntent, 1)
+                        }
+                    }
+                }
+            }
+
     fun scanQR(){
         val qrImgView = findViewById<ImageView>(R.id.qrImageView)
-        val qrBitMap = findViewById<ImageView>(R.id.qrImageView)
 
         val barcodeDetector = BarcodeDetector
             .Builder(this)
             .setBarcodeFormats( Barcode.QR_CODE)
             .build()
 
-        fun TakePicture(){
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                .also {takePictureIntent -> takePictureIntent
-                    .resolveActivity(packageManager)
-                    ?.also{
-                startActivityForResult(takePictureIntent,1)
-            }}
-        }
-
-        fun TranslatePDF(){
-
-        }
-
-        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-            if(requestCode == 1 && resultCode == RESULT_OK){
-                val tempbitmap = data.extras.get("data") as Bitmap
-                qrImgView.setImageBitmap(tempbitmap)
-            }
-        }
-
-
-        //val qrFrame = Frame.Builder().setImageData(ByteBuffer.allocate(5000),1080,1024, YV12).build()
-        val qrFrame = Frame.Builder().setBitmap(qrBitMap).build()
-
-        //qrImgView.setImageBitmap(qrBitMap)
-
-        val barCodes = barcodeDetector.detect()
-        val tempbarCodes = barCodes.valueAt(0)
-        val qrtextview = findViewById<TextView>(R.id.qrtxtContent)
-
-        qrtextview.text = tempbarCodes.rawValue
+        val barCodes = SparseArray<Barcode>(1)
 
         if(!barcodeDetector.isOperational()){
             Toast.makeText(this@QR, "Could Not Set Up Barcode Detector",Toast.LENGTH_SHORT).show()
         }
 
-        //barcodeDetector.se
-        //CameraSource.Builder
-        //val tempQRCamera = CameraSource.Builder(this,barcodeDetector).setAutoFocusEnabled(true).setFacing(1).build()
-        //tempQRCamera.takePicture()
+        processQR(barcodeDetector)
+
     }
 
-    fun takePicture(a: BarcodeDetector){
-        val tempQRCamera = CameraSource.Builder(this,a).setAutoFocusEnabled(true).setFacing(1).build()
-        checkSelfPermission(Context.CAMERA_SERVICE)
-        tempQRCamera.start()
+    fun processQR(a : BarcodeDetector){
+        val getbitmap = BitmapFactory.decodeResource(this@QR.resources , R.id.qrImageView)
+        if(getbitmap != null){
+            val qrFrame = Frame.Builder().setBitmap(getbitmap).build()
+            val qrTextView = findViewById<TextView>(R.id.qrtxtContent)
+            val barCodes = a.detect(qrFrame)
+            val barCode = barCodes.valueAt(0)
+            qrTextView.setText(barCode.rawValue)
+        }
+        else{
+            Toast.makeText(this,"Error",Toast.LENGTH_LONG).show()
+        }
     }
 }

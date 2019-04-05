@@ -7,7 +7,10 @@
             android:title="@string/action_change_map"
             app:showAsAction="never"
             app:actionViewClass="android.widget.Button"/>
-    <item android:id="@+id/action_qr" android:title="@string/action_qr" app:showAsAction="never"
+    <item
+            android:id="@+id/action_qr"
+            android:title="@string/action_qr"
+            app:showAsAction="never"
     />
     <item
         android:id="@+id/action_settings"

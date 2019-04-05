@@ -6,5 +6,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="action_qr">QR Reader</string>
     <string name="google_maps_key"></string>
-    <string name="button_qr">Process This Image</string>
+    <string name="qrbuttonprocess">Process Image</string>
+    <string name="qrtxtContent"><font size = "10"/>Press Take Picture to Begin</string>
+    <string name="qrbuttoncamera">Take Picture</string>
 </resources>
