@@ -86,6 +86,9 @@ class QR : AppCompatActivity() {
         return file
     }
 
+    fun createInternalImageF(){
+        val fname = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    }
     @Throws(IOException::class)
     fun createImageF(): File {
         // Create an image file name
@@ -112,9 +115,6 @@ class QR : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == 1 && resultCode == RESULT_OK){
-            val qrImgView = findViewById<ImageView>(R.id.qrImageView)
-           // val tempbitmap = openFileInput("JPEG_20190405_044854_2337363280288716020.jpg") as Bitmap
-           // qrImgView.setImageBitmap(tempbitmap)
             addpic()
         }
     }
@@ -137,6 +137,10 @@ class QR : AppCompatActivity() {
                         )
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,photoURI)
                         startActivityForResult(takePictureIntent, 1)
+                        val qrImgView = findViewById<ImageView>(R.id.qrImageView)
+                        val tempbitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(photoURI))
+                        //JPEG_20190405_173604_8033121832639756727.jpg
+                        qrImgView.setImageBitmap(tempbitmap)
                         }
                     }
                 }
