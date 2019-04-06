@@ -18,13 +18,9 @@ import android.support.v7.widget.Toolbar
 import android.util.SparseArray
 import android.view.Menu
 import android.view.MenuItem
-import android.view.SurfaceView
 import android.widget.ImageView
 import android.widget.TextView
-import com.google.android.gms.vision.CameraSource
-import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.Frame
-import com.google.android.gms.vision.MultiDetector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import org.w3c.dom.Text
@@ -58,6 +54,13 @@ class QR : AppCompatActivity() {
         val mToolbar: Toolbar = findViewById(R.id.toolbar2)
         setSupportActionBar(mToolbar)
     }
+
+
+    val qrPictureRequestCode = 1
+    val qrCropPictureCode = 2
+    lateinit var qrImgUri : Uri
+
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.my_menu, menu)
@@ -87,9 +90,12 @@ class QR : AppCompatActivity() {
         return file
     }
 
-    fun createInternalImageF(){
-        val fname = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    fun qrCrop(a: URI){
+        val qrImgURI = a
+        Intent("com.android.camera.action.CROP")
+            .setDataAndType(qrImgUri)
     }
+
     @Throws(IOException::class)
     fun createImageF(): File {
         // Create an image file name
@@ -113,7 +119,6 @@ class QR : AppCompatActivity() {
             sendBroadcast(mediaScanIntent)
         }
     }
-    lateinit var qrImgUri : Uri
 
     fun showPreview(a : Uri){
         val qrImgView = findViewById<ImageView>(R.id.qrImageView)
@@ -123,7 +128,7 @@ class QR : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode == 1 && resultCode == RESULT_OK){
+        if(requestCode == qrPictureRequestCode && resultCode == RESULT_OK){
             addpic()
             showPreview(qrImgUri)
         }
@@ -147,7 +152,7 @@ class QR : AppCompatActivity() {
                         )
                         qrImgUri = photoURI
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,photoURI)
-                        startActivityForResult(takePictureIntent, 1)
+                        startActivityForResult(takePictureIntent, qrPictureRequestCode)
                         }
                     }
                 }
