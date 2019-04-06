@@ -30,6 +30,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector
 import org.w3c.dom.Text
 import java.io.File
 import java.io.IOException
+import java.net.URI
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
@@ -112,10 +113,19 @@ class QR : AppCompatActivity() {
             sendBroadcast(mediaScanIntent)
         }
     }
+    lateinit var qrImgUri : Uri
+
+    fun showPreview(a : Uri){
+        val qrImgView = findViewById<ImageView>(R.id.qrImageView)
+        val tempbitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(a))
+        //JPEG_20190405_173604_8033121832639756727.jpg
+        qrImgView.setImageBitmap(tempbitmap)
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == 1 && resultCode == RESULT_OK){
             addpic()
+            showPreview(qrImgUri)
         }
     }
 
@@ -135,12 +145,9 @@ class QR : AppCompatActivity() {
                             "com.example.firemap.fileprovider",
                             it
                         )
+                        qrImgUri = photoURI
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,photoURI)
                         startActivityForResult(takePictureIntent, 1)
-                        val qrImgView = findViewById<ImageView>(R.id.qrImageView)
-                        val tempbitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(photoURI))
-                        //JPEG_20190405_173604_8033121832639756727.jpg
-                        qrImgView.setImageBitmap(tempbitmap)
                         }
                     }
                 }
