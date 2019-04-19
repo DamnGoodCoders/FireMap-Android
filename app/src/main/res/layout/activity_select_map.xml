@@ -8,15 +8,15 @@
         tools:context=".SelectMap">
 
     <android.support.v7.widget.RecyclerView
-            android:layout_width="395dp"
-            android:layout_height="715dp" tools:layout_editor_absoluteX="8dp" android:layout_marginBottom="100dp"
-            app:layout_constraintBottom_toBottomOf="parent" android:id="@+id/recyclerView"/>
-    <Button
-            android:text="Download Map"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/button" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/fileRecyclerView"/>
+    <!--<Button-->
+            <!--android:text="Download Map"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"-->
+            <!--android:id="@+id/button" android:layout_marginTop="8dp"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/recyclerView" android:layout_marginBottom="8dp"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent"/>-->
 </android.support.constraint.ConstraintLayout>
