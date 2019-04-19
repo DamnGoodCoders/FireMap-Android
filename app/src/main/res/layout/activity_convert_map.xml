@@ -8,14 +8,13 @@
         tools:context=".ConvertMap">
 
     <android.support.v7.widget.RecyclerView
-            android:layout_width="395dp"
-            android:layout_height="715dp" tools:layout_editor_absoluteX="8dp"
-            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="100dp"/>
-    <Button
-            android:text="Download Map"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="28dp"
-            android:id="@+id/button5" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" android:onClick="goToDownloadMap"/>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    <!--<Button-->
+            <!--android:text="Select Map"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="28dp"-->
+            <!--android:id="@+id/button5" app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintStart_toStartOf="parent" android:onClick="goToDownloadMap"/>-->
 </android.support.constraint.ConstraintLayout>

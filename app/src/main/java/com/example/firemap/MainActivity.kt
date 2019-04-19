@@ -11,21 +11,22 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import org.w3c.dom.Text
-//import org.gdal.gdal.gdal;
-//import org.gdal.gdal.Band;
-//import org.gdal.gdal.Dataset;
 import android.content.res.AssetManager
 import android.support.v4.app.ActivityCompat
+import android.util.Log
 import java.io.File
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
+
+    private val globals = ApplicationGlobals()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val mToolbar: Toolbar = findViewById(R.id.toolbar)
-        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
 
         setSupportActionBar(mToolbar)
 
@@ -34,10 +35,7 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, SelectMap::class.java)
         startActivity(intent)
     }
-    fun goToConvertMap(view: View) {
-        val intent = Intent(this, ConvertMap::class.java)
-        startActivity(intent)
-    }
+
     fun goToDisplayMap(view: View) {
         val intent = Intent(this, DisplayMap::class.java)
         startActivity(intent)
@@ -60,6 +58,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         return true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        try {
+            Log.e("Global Lat Long", globals.getLatLongPlacement().toString())
+        } catch (e: Exception) {
+            Log.e("err","No lat long globally (yet)")
+        }
     }
 
 }
